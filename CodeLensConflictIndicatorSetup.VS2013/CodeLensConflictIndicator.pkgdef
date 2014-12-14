@@ -1,11 +1,11 @@
 ﻿[$RootKey%\Packages\{7603F33D-F57C-4B7E-8CE5-29EC88C23AE2}]
-@="CodeLensConflictIndicatorTfsPackage"
+@="CodeLensConflictIndicator"
 "InprocServer32"="$WinDir$\SYSTEM32\MSCOREE.DLL"
 "Class"="CodeLens.ConflictIndicator.ConflictIndicatorPackage"
 "CodeBase"="$PackageFolder$\CodeLensConflictIndicator.Library.dll"
 
 [$RootKey$\Packages\{9289DFDD-543A-4F12-A2DD-6E681719BF49}]
-@="CodeLensConflictIndicator"
+@="CodeLensConflictIndicatorTfsPackage"
 "InprocServer32"="$WinDir$\SYSTEM32\MSCOREE.DLL"
 "Class"="CodeLens.ConflictIndicator.TFSPackage"
 "CodeBase"="$PackageFolder$\CodeLensConflictIndicator.Library.dll"
