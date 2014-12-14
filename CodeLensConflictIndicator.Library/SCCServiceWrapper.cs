@@ -5,18 +5,19 @@ using System.Threading.Tasks;
 
 namespace CodeLens.ConflictIndicator
 {
-    public class TFSServiceWrapper : ITFSService
+    public class SCCServiceWrapper<T> : ISCCServiceWrapper
+        where T : ISCCService
     {
-        private static TFSServiceWrapper s_instance = new TFSServiceWrapper();
+        private static SCCServiceWrapper<T> s_instance = new SCCServiceWrapper<T>();
 
         private IServiceProvider serviceProvider;
 
 #pragma warning disable 0649
         [Import]
-        private Lazy<ITFSService> realService;
+        private Lazy<T> realService;
 #pragma warning restore 0649
 
-        private TFSServiceWrapper()
+        private SCCServiceWrapper()
         {
         }
 
@@ -47,9 +48,9 @@ namespace CodeLens.ConflictIndicator
             }
         }
 
-        public static TFSServiceWrapper Instance { get { return s_instance; } }
+        public static SCCServiceWrapper<T> Instance { get { return s_instance; } }
 
-        public bool RealTFSServiceReady()
+        public bool RealServiceReady()
         {
             if (this.serviceProvider == null)
                 return false;
@@ -60,73 +61,73 @@ namespace CodeLens.ConflictIndicator
             return this.realService != null && this.realService.Value != null;
         }
 
-        public bool IsFileInTFSSourceControl(string localPath)
+        public bool IsFileInSourceControl(string localPath)
         {
-            if (this.RealTFSServiceReady())
-                return this.realService.Value.IsFileInTFSSourceControl(localPath);
+            if (this.RealServiceReady())
+                return this.realService.Value.IsFileInSourceControl(localPath);
 
             return false;
         }
 
         public bool HasPendingChanges(string localItemPath)
         {
-            if (this.RealTFSServiceReady())
+            if (this.RealServiceReady())
                 return this.realService.Value.HasPendingChanges(localItemPath);
 
             return false;
         }
 
-        public Task DownloadFileAtVersion(string localItemPath, int version, string outputPath)
+        public Task DownloadFileAtVersion(string localItemPath, object version, string outputPath)
         {
-            if (this.RealTFSServiceReady())
+            if (this.RealServiceReady())
                 return this.realService.Value.DownloadFileAtVersion(localItemPath, version, outputPath);
 
             return null;
         }
 
-        public Task<ChangesetInfo> GetLatestVersion(string localItemPath)
+        public Task<VersionInfo> GetLatestVersion(string localItemPath)
         {
-            if (this.RealTFSServiceReady())
+            if (this.RealServiceReady())
                 return this.realService.Value.GetLatestVersion(localItemPath);
 
             return null;
         }
 
-        public Task<int> GetLocalVersion(string localItemPath)
+        public Task<object> GetLocalVersion(string localItemPath)
         {
-            if (this.RealTFSServiceReady())
+            if (this.RealServiceReady())
                 return this.realService.Value.GetLocalVersion(localItemPath);
 
             return null;
         }
 
-        public void NavigateToChangeset(int changesetId)
+        public void NavigateToVersion(object changesetId)
         {
-            if (this.RealTFSServiceReady())
-                this.realService.Value.NavigateToChangeset(changesetId);
+            if (this.RealServiceReady())
+                this.realService.Value.NavigateToVersion(changesetId);
         }
 
         public void CompareWithWorkspace(string item)
         {
-            if (this.RealTFSServiceReady())
+            if (this.RealServiceReady())
                 this.realService.Value.CompareWithWorkspace(item);
         }
 
         public void CompareWithLatest(string item)
         {
-            if (this.RealTFSServiceReady())
+            if (this.RealServiceReady())
                 this.realService.Value.CompareWithLatest(item);
         }
 
         public void GetLatest(string item)
         {
-            if (this.RealTFSServiceReady())
+            if (this.RealServiceReady())
                 this.realService.Value.GetLatest(item);
         }
 
         public string GetEmail(string accountUniqueName)
         {
-            if (this.RealTFSServiceReady())
+            if (this.RealServiceReady())
                 return this.realService.Value.GetEmail(accountUniqueName);
 
             return null;

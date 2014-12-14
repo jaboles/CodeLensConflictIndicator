@@ -17,8 +17,8 @@ using System.Threading.Tasks;
 namespace CodeLens.ConflictIndicator
 {
     [PartCreationPolicy(CreationPolicy.Shared)]
-    [Export(typeof(ITFSService))]
-    class TFSService : ITFSService
+    [Export(typeof(TFSService))]
+    class TFSService : ISCCService
     {
         private IServiceProvider serviceProvider;
         private EnvDTE.DTE dte;
@@ -33,7 +33,7 @@ namespace CodeLens.ConflictIndicator
             Debug.Assert(this.dte != null);
         }
 
-        public bool IsFileInTFSSourceControl(string localPath)
+        public bool IsFileInSourceControl(string localPath)
         {
             var workspace = this.GetWorkspace(localPath);
             return workspace != null;
@@ -57,20 +57,20 @@ namespace CodeLens.ConflictIndicator
             return false;
         }
 
-        public async Task DownloadFileAtVersion(string localItemPath, int version, string outputPath)
+        public async Task DownloadFileAtVersion(string localItemPath, object version, string outputPath)
         {
             await Task.Run(() =>
             {
                 var vcs = GetVersionControl();
 
-                Item item = vcs.GetItem(localItemPath, new ChangesetVersionSpec(version), DeletedState.NonDeleted, true);
+                Item item = vcs.GetItem(localItemPath, new ChangesetVersionSpec((int)version), DeletedState.NonDeleted, true);
                 Debug.WriteLine("TFSService.DownloadFileAtVersion: Starting download of " + localItemPath);
                 item.DownloadFile(outputPath);
                 Debug.WriteLine("TFSService.DownloadFileAtVersion: Completed download of " + localItemPath);
             });
         }
 
-        public async Task<ChangesetInfo> GetLatestVersion(string localItemPath)
+        public async Task<VersionInfo> GetLatestVersion(string localItemPath)
         {
             var vcs = this.GetVersionControl();
 
@@ -90,7 +90,7 @@ namespace CodeLens.ConflictIndicator
             if (latestChangeset != null)
             {
                 int latestChangesetId = latestChangeset.ChangesetId;
-                return new ChangesetInfo(latestChangeset.ChangesetId,
+                return new VersionInfo(latestChangeset.ChangesetId,
                     latestChangeset.Owner,
                     latestChangeset.OwnerDisplayName,
                     latestChangeset.CreationDate,
@@ -102,7 +102,7 @@ namespace CodeLens.ConflictIndicator
             }
         }
 
-        public Task<int> GetLocalVersion(string localItemPath)
+        public Task<object> GetLocalVersion(string localItemPath)
         {
             var workspace = this.GetWorkspace(localItemPath);
             LocalVersion[][] localVersions = workspace.GetLocalVersions(new ItemSpec[] { new ItemSpec(localItemPath, RecursionType.None) }, false);
@@ -111,14 +111,14 @@ namespace CodeLens.ConflictIndicator
             {
                 if (localVersions[0].Length > 0)
                 {
-                    return Task.FromResult(localVersions[0][0].Version);
+                    return Task.FromResult((object)localVersions[0][0].Version);
                 }
             }
 
-            return Task.FromResult(0);
+            return Task.FromResult((object)0);
         }
 
-        public void NavigateToChangeset(int changesetId)
+        public void NavigateToVersion(object changesetId)
         {
             TeamExplorerUtils.Instance.TryNavigateToChangesetDetails(this.serviceProvider, changesetId, TeamExplorerUtils.NavigateOptions.AlwaysNavigate);
         }

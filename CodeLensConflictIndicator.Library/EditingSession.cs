@@ -24,11 +24,11 @@ namespace CodeLens.ConflictIndicator
         private readonly FileSystemWatcher fileWatcher;
         
         // Info about the user's local version
-        private int localVersion;
+        private object localVersion;
         private string localVersionContent;
 
         // Info about the latest version on teh server
-        private ChangesetInfo latestVersion;
+        private VersionInfo latestVersion;
         private string latestVersionContent;
 
         private IHierarchicalDifferenceCollection latestComparedToLocalDifferences;
@@ -65,9 +65,19 @@ namespace CodeLens.ConflictIndicator
             get { return this.filePath; }
         }
 
-        public ChangesetInfo LatestVersion
+        public VersionInfo LatestVersion
         {
             get { return this.latestVersion; }
+        }
+
+        public bool SCCServiceReady
+        {
+            get { return SCCService.RealServiceReady(); }
+        }
+
+        public ISCCServiceWrapper SCCService
+        {
+            get { return SCCServiceWrapper<TFSService>.Instance; }
         }
 
         public IEnumerable<ConflictInfo> GetConflicts()
@@ -110,13 +120,13 @@ namespace CodeLens.ConflictIndicator
         private async Task<bool> UpdateLocalVersionContent()
         {
             // Check if the local version changed.
-            int newLocalVersion = TFSServiceWrapper.Instance.GetLocalVersion(filePath).Result;
-            if (newLocalVersion != 0 && this.localVersion != newLocalVersion)
+            object newLocalVersion = SCCService.GetLocalVersion(filePath).Result;
+            if (!newLocalVersion.Equals(0) && !string.IsNullOrEmpty(newLocalVersion as string) && !newLocalVersion.Equals(this.localVersion))
             {
                 // Get the content of the new local version
                 string downloadedLocalVersion = Path.GetTempFileName();
                 Debug.WriteLine(string.Format("Downloading latest from server to file://{0}", downloadedLocalVersion));
-                await TFSServiceWrapper.Instance.DownloadFileAtVersion(this.filePath, newLocalVersion, downloadedLocalVersion);
+                await SCCService.DownloadFileAtVersion(this.filePath, newLocalVersion, downloadedLocalVersion);
                 this.localVersionContent = File.ReadAllText(downloadedLocalVersion);
                 this.localVersion = newLocalVersion;
 
@@ -130,15 +140,15 @@ namespace CodeLens.ConflictIndicator
         private async Task<bool> UpdateLatestVersionContent()
         {
             // TODO: put this in an event handler that calls this method.
-            ChangesetInfo newLatestVersion = await TFSServiceWrapper.Instance.GetLatestVersion(this.filePath);
+            var newLatestVersion = await SCCService.GetLatestVersion(this.filePath);
             Debug.WriteLine("Latest version: {0}", localVersion);
 
-            if (newLatestVersion != null && (this.latestVersion == null || this.latestVersion.Id != newLatestVersion.Id))
+            if (newLatestVersion != null && (this.latestVersion == null || !this.latestVersion.Id.Equals(newLatestVersion.Id)))
             {
                 // Get the content of the latest version
                 string downloadedLatest = Path.GetTempFileName();
                 Debug.WriteLine(string.Format("Downloading latest from server to file://{0}", downloadedLatest));
-                await TFSServiceWrapper.Instance.DownloadFileAtVersion(this.filePath, newLatestVersion.Id, downloadedLatest);
+                await SCCService.DownloadFileAtVersion(this.filePath, newLatestVersion.Id, downloadedLatest);
                 this.latestVersionContent = File.ReadAllText(downloadedLatest);
                 this.latestVersion = newLatestVersion;
 
@@ -156,7 +166,7 @@ namespace CodeLens.ConflictIndicator
             // session.
             if (this.latestVersion != null && this.latestVersionContent != null)
             {
-                if (this.latestVersion.Id == this.localVersion)
+                if (this.latestVersion.Id.Equals(this.localVersion))
                 {
                     // If user's local workspace is now at the latest, there are no differences.
                     this.latestComparedToLocalDifferences = null;
@@ -178,7 +188,7 @@ namespace CodeLens.ConflictIndicator
         public async Task RecalculateConflicts(ForceCheckForNewVersion forceCheckForNewVersion = ForceCheckForNewVersion.None)
         {
             // Hasty exit if the file is not even under source control.
-            if (!TFSServiceWrapper.Instance.IsFileInTFSSourceControl(this.filePath))
+            if (!SCCService.IsFileInSourceControl(this.filePath))
             {
                 return;
             }
@@ -191,7 +201,7 @@ namespace CodeLens.ConflictIndicator
                 // Fetch the local version (base) if it hasn't yet been.
                 // This is only the first-time update, subsequent updates are handled
                 // by an event fired by a FileSystemWatcher that monitors the file.
-                if (forceCheckForNewVersion == ForceCheckForNewVersion.LocalVersion || this.localVersionContent == null || this.localVersion <= 0)
+                if (forceCheckForNewVersion == ForceCheckForNewVersion.LocalVersion || this.localVersionContent == null || this.localVersion == null)
                 {
                     versionUpdated |= await UpdateLocalVersionContent();
                 }
@@ -211,8 +221,8 @@ namespace CodeLens.ConflictIndicator
                 // the user's local version is not at the latest), calculate conflicts.s
                 IEnumerable<ConflictInfo> conflicts = null;
                 if (this.latestVersion != null &&
-                    this.localVersion != 0 &&
-                    this.latestVersion.Id != this.localVersion &&
+                    this.localVersion != null &&
+                    !this.latestVersion.Id.Equals(this.localVersion) &&
                     this.localVersionContent != null &&
                     this.latestVersionContent != null)
                 {
@@ -323,7 +333,7 @@ namespace CodeLens.ConflictIndicator
 
     public class ConflictDataChangedEventArgs : EventArgs
     {
-        public ConflictDataChangedEventArgs(IEnumerable<ConflictInfo> newConflicts, ChangesetInfo latestVersion)
+        public ConflictDataChangedEventArgs(IEnumerable<ConflictInfo> newConflicts, VersionInfo latestVersion)
             : base()
         {
             this.NewConflicts = newConflicts;
@@ -331,6 +341,6 @@ namespace CodeLens.ConflictIndicator
         }
 
         public IEnumerable<ConflictInfo> NewConflicts { get; private set; }
-        public ChangesetInfo LatestVersion { get; private set; }
+        public VersionInfo LatestVersion { get; private set; }
     }
 }

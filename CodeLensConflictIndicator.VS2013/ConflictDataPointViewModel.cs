@@ -25,7 +25,7 @@ namespace CodeLens.ConflictIndicator
             : base(dataPoint)
         {
             this.PropertyChanged += this.OnPropertyChanged;
-            this.ConflictViewModel = new ConflictViewModel();
+            this.ConflictViewModel = new ConflictViewModel(dataPoint.EditingSession.SCCService);
         }
 
         public override ImageSource GlyphSource

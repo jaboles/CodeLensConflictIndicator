@@ -14,9 +14,9 @@ namespace CodeLens.ConflictIndicator
         private ICommand expandCommand;
         private Visibility expanded = Visibility.Collapsed;
 
-        public ConflictPopupViewModel()
+        public ConflictPopupViewModel(ISCCService sccService)
         {
-            this.ConflictViewModel = new ConflictViewModel();
+            this.ConflictViewModel = new ConflictViewModel(sccService);
         }
 
         public ConflictViewModel ConflictViewModel

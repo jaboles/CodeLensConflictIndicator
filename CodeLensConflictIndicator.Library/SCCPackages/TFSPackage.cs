@@ -14,7 +14,7 @@ namespace CodeLens.ConflictIndicator
         {
             base.Initialize();
 
-            TFSServiceWrapper.Instance.Initialize(this);
+            SCCServiceWrapper<TFSService>.Instance.Initialize(this);
         }
     }
 }

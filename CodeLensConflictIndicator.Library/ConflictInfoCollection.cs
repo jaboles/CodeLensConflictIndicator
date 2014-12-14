@@ -5,12 +5,12 @@ namespace CodeLens.ConflictIndicator
 {
     public class ConflictInfoCollection : ObservableCollection<ConflictInfo>
     {
-        public ConflictInfoCollection(IEnumerable<ConflictInfo> conflictInfo, ChangesetInfo latestVersion)
+        public ConflictInfoCollection(IEnumerable<ConflictInfo> conflictInfo, VersionInfo latestVersion)
             : base(conflictInfo)
         {
             this.LatestVersion = latestVersion;
         }
 
-        public ChangesetInfo LatestVersion { get; private set; }
+        public VersionInfo LatestVersion { get; private set; }
     }
 }

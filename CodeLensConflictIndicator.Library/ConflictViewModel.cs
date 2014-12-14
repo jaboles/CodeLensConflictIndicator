@@ -19,10 +19,13 @@ namespace CodeLens.ConflictIndicator
         private ICommand compareWithWorkspaceCommand;
         private ICommand getLatestCommand;
 
-        private ChangesetInfo latestVersion;
+        private VersionInfo latestVersion;
 
-        public ConflictViewModel()
+        private ISCCService sccService;
+
+        public ConflictViewModel(ISCCService sccService)
         {
+            this.sccService = sccService;
             this.PropertyChanged += this.OnPropertyChanged;
         }
 
@@ -30,7 +33,7 @@ namespace CodeLens.ConflictIndicator
         {
         }
 
-        public ChangesetInfo LatestVersion
+        public VersionInfo LatestVersion
         {
             get
             {
@@ -76,7 +79,7 @@ namespace CodeLens.ConflictIndicator
                     {
                         if (this.LatestVersion != null)
                         {
-                            TFSServiceWrapper.Instance.NavigateToChangeset(this.LatestVersion.Id);
+                            sccService.NavigateToVersion(this.LatestVersion.Id);
                         }
                     });
                 }
@@ -97,7 +100,7 @@ namespace CodeLens.ConflictIndicator
                         {
                             await Task.Run(() =>
                             {
-                                string email = TFSServiceWrapper.Instance.GetEmail(this.LatestVersion.OwnerUniqueName);
+                                string email = sccService.GetEmail(this.LatestVersion.OwnerUniqueName);
                                 email = HttpUtility.UrlEncode(email);
                                 string emailUrl = string.Format("mailto:{0}", email);
                                 Process.Start(emailUrl);
@@ -122,7 +125,7 @@ namespace CodeLens.ConflictIndicator
                     this.compareLatestCommand = new RelayCommand((param) =>
                     {
                         string item = this.FilePath;
-                        TFSServiceWrapper.Instance.CompareWithLatest(item);
+                        sccService.CompareWithLatest(item);
                     });
                 }
 
@@ -139,7 +142,7 @@ namespace CodeLens.ConflictIndicator
                     this.compareWithWorkspaceCommand = new RelayCommand((param) =>
                     {
                         string item = this.FilePath;
-                        TFSServiceWrapper.Instance.CompareWithWorkspace(item);
+                        sccService.CompareWithWorkspace(item);
                     });
                 }
 
@@ -156,7 +159,7 @@ namespace CodeLens.ConflictIndicator
                     this.getLatestCommand = new RelayCommand((param) =>
                     {
                         string item = this.FilePath;
-                        TFSServiceWrapper.Instance.GetLatest(item);
+                        sccService.GetLatest(item);
                     });
                 }
 

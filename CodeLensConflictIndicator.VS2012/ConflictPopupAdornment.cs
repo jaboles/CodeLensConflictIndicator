@@ -64,7 +64,7 @@ namespace CodeLens.ConflictIndicator
                     if (control == null)
                     {
                         control = new ConflictPopup();
-                        controlViewModel = new ConflictPopupViewModel();
+                        controlViewModel = new ConflictPopupViewModel(this.editingSession.SCCService);
                         control.DataContext = controlViewModel;
                     }
                     else

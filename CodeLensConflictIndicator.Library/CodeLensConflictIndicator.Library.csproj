@@ -131,7 +131,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChangesetInfo.cs" />
+    <Compile Include="VersionInfo.cs" />
     <Compile Include="ConflictControl.xaml.cs">
       <DependentUpon>ConflictControl.xaml</DependentUpon>
     </Compile>
@@ -146,7 +146,7 @@
     <Compile Include="FileComparerService.cs" />
     <Compile Include="ForceCheckForNewVersion.cs" />
     <Compile Include="Icons.cs" />
-    <Compile Include="ITFSService.cs" />
+    <Compile Include="ISCCService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReflectionProxies\ClientHelperVSProxy.cs" />
     <Compile Include="ReflectionProxy.cs" />
@@ -159,7 +159,7 @@
     </Compile>
     <Compile Include="SCCPackages\TFSPackage.cs" />
     <Compile Include="SCCServices\TFSService.cs" />
-    <Compile Include="SCCServiceWrappers\TFSServiceWrapper.cs" />
+    <Compile Include="SCCServiceWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Key.snk" />

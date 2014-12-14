@@ -22,16 +22,21 @@ namespace CodeLens.ConflictIndicator
     {
         private bool disposed;
         private object disposeLock = new object();
-        private EditingSession editingSession;
 
         public ConflictDataPoint(EditingSession editingSession, ICodeElementDescriptor methodIdentifier)
         {
             if (editingSession == null) throw new ArgumentNullException("editingSession");
 
             this.MethodIdentifier = methodIdentifier;
-            this.editingSession = editingSession;
+            this.EditingSession = editingSession;
 
-            editingSession.ConflictDataChanged += this.OnConflictDataChanged;
+            EditingSession.ConflictDataChanged += this.OnConflictDataChanged;
+        }
+
+        public EditingSession EditingSession
+        {
+            get;
+            private set;
         }
 
         public ICodeElementDescriptor MethodIdentifier
@@ -49,7 +54,7 @@ namespace CodeLens.ConflictIndicator
                     if (disposed)
                     {
                         this.MethodIdentifier.SyntaxNodeChanged -= this.OnSyntaxNodeChanged;
-                        this.editingSession.ConflictDataChanged -= this.OnConflictDataChanged;
+                        this.EditingSession.ConflictDataChanged -= this.OnConflictDataChanged;
                     }
 
                     this.disposed = true;
@@ -62,7 +67,7 @@ namespace CodeLens.ConflictIndicator
         public override Task<ConflictInfoCollection> GetDataAsync()
         {
             // TFS binaries not loaded. Hasty exit.
-            if (!TFSServiceWrapper.Instance.RealTFSServiceReady())
+            if (!this.EditingSession.SCCServiceReady)
             {
                 return null;
             }
@@ -75,7 +80,7 @@ namespace CodeLens.ConflictIndicator
             {
                 return Task.Run<ConflictInfoCollection>(() =>
                 {
-                    IEnumerable<ConflictInfo> conflicts = this.editingSession.GetConflicts();
+                    IEnumerable<ConflictInfo> conflicts = this.EditingSession.GetConflicts();
 
                     if (conflicts != null)
                     {
@@ -86,7 +91,7 @@ namespace CodeLens.ConflictIndicator
 
                         if (conflictsWithinNode.Any())
                         {
-                            return new ConflictInfoCollection(conflictsWithinNode, this.editingSession.LatestVersion);
+                            return new ConflictInfoCollection(conflictsWithinNode, this.EditingSession.LatestVersion);
                         }
                     }
 
