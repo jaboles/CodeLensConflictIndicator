@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+  <Metadata>
+    <Identity Id="3a13644a-ef11-4868-b473-c54167cb44f5" Version="1.0" Language="en-US" Publisher="Jonathan Boles (joboles@microsoft.com)" />
+    <DisplayName>CodeLens Conflict Indicator</DisplayName>
+    <Description xml:space="preserve">CodeLens indicator that shows source code conflicts while editing.</Description>
+    <Icon>ConflictsLarge.png</Icon>
+    <PreviewImage>previewscreenshot.png</PreviewImage>
+  </Metadata>
+  <Installation>
+    <InstallationTarget Id="Microsoft.VisualStudio.Ultimate" Version="[12.0]" />
+  </Installation>
+  <Dependencies>
+    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.0,)" />
+  </Dependencies>
+  <Assets>
+    <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="CodeLensConflictIndicator.VS2013" Path="|CodeLensConflictIndicator.VS2013|" />
+    <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="CodeLensConflictIndicator.Library" Path="|CodeLensConflictIndicator.Library|" />
+    <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+    <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="CodeLensConflictIndicator.VS2012" Path="|CodeLensConflictIndicator.VS2012|" />
+  </Assets>
+</PackageManifest>

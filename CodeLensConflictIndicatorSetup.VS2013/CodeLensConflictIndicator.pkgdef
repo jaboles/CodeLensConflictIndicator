@@ -1,0 +1,19 @@
+﻿[$RootKey$\Packages\{9289DFDD-543A-4F12-A2DD-6E681719BF49}]
+@="CodeLensConflictIndicator"
+"InprocServer32"="$WinDir$\SYSTEM32\MSCOREE.DLL"
+"Class"="CodeLens.ConflictIndicator.TFSPackage"
+"CodeBase"="$PackageFolder$\CodeLensConflictIndicator.Library.dll"
+
+[$RootKey$\Packages\{423B29A3-0BA9-4417-AE88-AD6071A8162A}]
+@="CodeLensConflictIndicator (VS12)"
+"InprocServer32"="$WinDir$\SYSTEM32\MSCOREE.DLL"
+"Class"="CodeLens.ConflictIndicator.ConflictDetectionPackageVS12"
+"CodeBase"="$PackageFolder$\CodeLensConflictIndicator.VS2013.dll"
+
+[$RootKey$\BindingPaths\{C45CF8D2-3112-4E70-9F4E-FEBC8802D357}]
+"$PackageFolder$"=""
+
+[$RootKey$\AutoLoadPackages\{E13EEDEF-B531-4AFE-9725-28A69FA4F896}]
+"{9289DFDD-543A-4F12-A2DD-6E681719BF49}"=dword:00000000
+"{423B29A3-0BA9-4417-AE88-AD6071A8162A}"=dword:00000000
+
