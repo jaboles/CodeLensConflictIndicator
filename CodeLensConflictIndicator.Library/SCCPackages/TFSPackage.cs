@@ -15,8 +15,6 @@ namespace CodeLens.ConflictIndicator
             base.Initialize();
 
             TFSServiceWrapper.Instance.Initialize(this);
-            FileComparerService.Instance.Initialize(this);
-            EditingSessionFactory.Initialize(this);
         }
     }
 }

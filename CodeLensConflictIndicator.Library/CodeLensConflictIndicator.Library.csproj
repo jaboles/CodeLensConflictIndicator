@@ -135,6 +135,7 @@
     <Compile Include="ConflictControl.xaml.cs">
       <DependentUpon>ConflictControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ConflictIndicatorPackage.cs" />
     <Compile Include="ConflictInfo.cs" />
     <Compile Include="ConflictInfoCollection.cs" />
     <Compile Include="ConflictViewModel.cs" />
@@ -156,9 +157,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
-    <Compile Include="TFSPackage.cs" />
-    <Compile Include="TFSService.cs" />
-    <Compile Include="TFSServiceWrapper.cs" />
+    <Compile Include="SCCPackages\TFSPackage.cs" />
+    <Compile Include="SCCServices\TFSService.cs" />
+    <Compile Include="SCCServiceWrappers\TFSServiceWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Key.snk" />
@@ -187,6 +188,7 @@
   <ItemGroup>
     <Resource Include="Resources\IndicatorIcon2.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -14,6 +14,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeLensConflictIndicatorSetup.VS2013", "CodeLensConflictIndicatorSetup.VS2013\CodeLensConflictIndicatorSetup.VS2013.csproj", "{D09961B5-8FDE-4C40-8E74-85CDC4210FE1}"
 EndProject
 Global
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
